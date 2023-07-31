@@ -20,6 +20,7 @@ import tech.thatgravyboat.craftify.utils.Utils.clearFormatting
 import tech.thatgravyboat.jukebox.api.state.State
 import java.net.URL
 import java.util.concurrent.CompletableFuture
+import kotlin.math.min
 
 class UIPlayer : UIBlock(ConfigColorConstraint("background")) {
 
@@ -113,7 +114,10 @@ class UIPlayer : UIBlock(ConfigColorConstraint("background")) {
                         image.clearChildren()
                         image.addChild(
                             UIImage(CompletableFuture.supplyAsync {
-                                return@supplyAsync SingleImageCache[url] ?: UIImage.get(url).also {
+                                return@supplyAsync SingleImageCache[url] ?: UIImage.get(url).let {
+                                    val scale = min(it.width / 40, it.height / 40);
+                                    it.getSubimage(it.width / 2 - 20 * scale, it.height / 2 - 20 * scale, 40 * scale, 40 * scale);
+                                }.also {
                                     SingleImageCache[url] = it
                                 }
                             }, EmptyImageProvider, EmptyImageProvider).constrain {
